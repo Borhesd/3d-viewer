@@ -1,0 +1,33 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+
+<div class="content-center">
+    <div class="bg-fly-text">3D VIEWER</div>
+    <div class="title">Добро пожаловать в 3D Viewer</div>
+    <div class="buttons">
+        <a class="button-default" asp-controller="Account" asp-action="Register">Регистрация</a>
+        <a class="button-default" asp-controller="Account" asp-action="LogIn">Войти в аккаунт</a>
+    </div>
+</div>
+
+<script>
+    $(window).on('load', function () {
+        $('.content-center').css("opacity", "1")
+
+        $('.content-center > .title').addClass('animated').addClass('fadeInDown')
+        $('.content-center > .bg-fly-text').hide().fadeIn(2000)
+        $('.content-center > .buttons').addClass('animated').addClass('fadeInUp')
+
+        $('a').on('click', function (event) {
+            event.preventDefault()
+            const href = $(this).attr("href")
+            $('.content-center').fadeOut(600, function () {
+                window.location.href = href
+            })
+        })
+    })
+</script>

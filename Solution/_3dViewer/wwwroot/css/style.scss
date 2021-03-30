@@ -1,0 +1,318 @@
+﻿$color-black: #000000;
+$color-white: #FFFFFF;
+$color-muted-white: #F9F9F9;
+$color-grey: #E5E5E5;
+$color-grey-pressed: #CCCCCC;
+$color-red: #D25E5E;
+$color-muted-red: rgba(210, 94, 94, 0.2);
+$color-muted-red-pressed: rgba(210, 94, 94, 0.35);
+
+@import 'startup';
+@import 'hub';
+@import 'editor';
+
+body {
+    font-family: 'Manrope', sans-serif;
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    position: relative;
+    background: #F9F9F9;
+    overflow: hidden;
+}
+
+a {
+    text-decoration: none;
+    font-size: 14px;
+}
+
+label {
+    color: $color-grey;
+    transition: .2s;
+    font-size: 14px;
+}
+
+input, textarea {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600;
+    padding: 6px;
+    border: 1px solid $color-grey;
+    box-sizing: border-box;
+    border-radius: 2px;
+    outline: none;
+    transition: .2s;
+    width: 270px;
+    background-color: transparent;
+    font-size: 14px;
+
+    &:hover {
+        border-color: $color-black;
+
+        + label {
+            color: $color-black;
+        }
+    }
+
+    &:focus {
+        border-color: $color-black;
+        background-color: $color-grey;
+
+        + label {
+            color: $color-black;
+        }
+    }
+}
+
+.hr {
+    height: 1px;
+    width: 100%;
+    background-color: $color-grey;
+    margin: 15px 0px;
+}
+
+.button-default {
+    font-family: 'Manrope', sans-serif;
+    padding: 7px 14px;
+    text-align: center;
+    border: 1px solid $color-grey;
+    box-sizing: border-box;
+    border-radius: 2px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: .2s;
+    color: $color-black;
+    background-color: transparent;
+    outline: none;
+    cursor: pointer;
+
+    &:hover {
+        border-color: $color-black;
+    }
+
+    &:active {
+        background-color: $color-grey;
+    }
+}
+
+.button-icon {
+    font-family: 'Manrope', sans-serif;
+    padding: 7px 14px;
+    box-sizing: border-box;
+    border-radius: 2px;
+    transition: .2s;
+    background-color: transparent;
+    outline: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-weight: 700;
+    font-size: 14px;
+
+    svg {
+        margin-right: 5px;
+    }
+
+    &:hover {
+        background-color: $color-grey;
+    }
+
+    &:active {
+        background-color: $color-grey-pressed;
+    }
+}
+
+.button-icon-red {
+    font-family: 'Manrope', sans-serif;
+    padding: 7px 14px;
+    box-sizing: border-box;
+    border-radius: 2px;
+    font-size: 14px;
+    transition: .2s;
+    color: $color-red;
+    background-color: transparent;
+    outline: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-weight: 700;
+
+    input {
+        font-family: 'Manrope', sans-serif;
+        font-weight: 600;
+        padding: unset;
+        border: unset;
+        box-sizing: border-box;
+        border-radius: unset;
+        outline: none;
+        transition: .2s;
+        width: unset;
+        background-color: transparent;
+        font-size: 14px;
+        color: $color-red;
+        cursor: pointer;
+
+        &:hover {
+            border-color: unset;
+
+            + label {
+                color: $color-black;
+            }
+        }
+
+        &:focus {
+            border-color: unset;
+            background-color: unset;
+
+            + label {
+                color: $color-black;
+            }
+        }
+    }
+
+    svg {
+        margin-left: 5px;
+    }
+
+    &:hover {
+        background-color: $color-muted-red;
+    }
+
+    &:active {
+        background-color: $color-muted-red-pressed;
+    }
+}
+
+.button-icon-only {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    transition: .2s;
+    cursor: pointer;
+
+    &:hover {
+        background-color: $color-grey;
+    }
+
+    &:active {
+        background-color: $color-grey-pressed;
+    }
+}
+
+.card {
+    background: $color-white;
+    box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.04), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 4px 8px rgba(0, 0, 0, 0.04);
+    border-radius: 2px;
+    padding: 30px;
+    position: relative;
+    animation-duration: .5s;
+
+    #close {
+        position: absolute;
+        top: 20px;
+    }
+
+    .title {
+        font-weight: 700;
+        font-size: 24px;
+        line-height: 33px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+
+        .title {
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .form-item {
+            display: flex;
+            flex-direction: column-reverse;
+            align-self: stretch;
+            margin: 10px 0px;
+
+            textarea {
+                height: 165px;
+                resize: none;
+            }
+        }
+
+        button {
+            margin-top: 10px;
+        }
+    }
+}
+
+.btn-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.popup {
+    position: absolute;
+    top: calc(50% - 465px / 2);
+    left: calc(50% - 330px / 2);
+    z-index: 100;
+    display: none;
+
+    .button-default {
+        margin-top: 10px;
+    }
+}
+
+.popup-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .15);
+    display: none;
+}
+
+.notification-list {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    z-index: 999;
+
+    .notification {
+        background: $color-white;
+        box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.04), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 4px 8px rgba(0, 0, 0, 0.04);
+        border-radius: 2px;
+        padding: 15px;
+        margin-bottom: 20px;
+        overflow: hidden;
+
+        .title {
+            font-weight: 800;
+        }
+
+        .text {
+            font-weight: 600;
+        }
+    }
+
+    .nt-danger {
+        background: $color-red;
+        box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.04), 0px 0px 2px rgba(210, 94, 94, 0.12), 0px 4px 8px rgba(210, 94, 94, 0.18);
+        border-radius: 2px;
+        color: $color-white;
+    }
+}

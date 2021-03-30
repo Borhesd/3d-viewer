@@ -1,0 +1,220 @@
+﻿@model IEnumerable<_3dViewer.ViewModels.ScenesHubViewModel>
+
+@{
+    ViewData["Title"] = "Hub";
+}
+
+<div class="hub">
+    <header>
+        <div class="user">
+            <div class="avatar">@User.Identity.Name[0]</div>
+            <div class="name">@User.Identity.Name</div>
+        </div>
+        <form asp-action="Logout" class="button-icon-red">
+            <input type="submit" value="Выйти из аккаунта"/>
+            <i data-feather="log-out"></i>
+        </form>
+    </header>
+
+    <div class="hub-content">
+        <div class="title">
+            <div class="text">Сцены</div>
+            <div id="create-scene" class="button-icon-only"><i data-feather="plus"></i></div>
+        </div>
+        <div class="scenes">
+            @foreach (ScenesHubViewModel scene in Model)
+            {
+                <div class="card" sceneid="@scene.Id">
+                    <div class="card-item">
+                        <label>Название</label>
+                        <div class="content">@scene.Name</div>
+                    </div>
+                    <div class="card-item">
+                        <label>Описание</label>
+                        <div class="content description">@scene.Description</div>
+                    </div>
+                    <div class="hr"></div>
+                    <div class="btn-row">
+                        <div routeid="@scene.Id" class="button-icon edit-scene"><i data-feather="edit-2"></i>Смотреть</div>
+                        <div routeid="@scene.Id" class="button-icon delete-scene"><i data-feather="trash"></i>Удалить</div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="popup">
+    <div class="card">
+        <form id="form-create-scene" asp-action="Create" asp-controller="Scenes" method="post">
+            <div class="title">Создать новую сцену</div>
+            <div class="form-item">
+                <input name="scene.name" />
+                <label>Название</label>
+            </div>
+            <div class="form-item">
+                <textarea name="scene.description"></textarea>
+                <label>Описание</label>
+            </div>
+            <div class="hr"></div>
+            <div class="btn-row">
+                <button class="button-default" type="submit">Создать</button>
+                <div id="create-cancel" class="button-default">Отмена</div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="popup-bg"></div>
+
+<div class="notification-list">
+
+</div>
+
+<script>
+    $(window).on('load', function () {
+        feather.replace()
+
+        $('.hub').addClass('animated').addClass('fadeIn')
+
+        $('#create-scene').on('click', function (event) {
+            event.preventDefault()
+            console.log('Create')
+            $('.popup-bg').fadeIn(200)
+            $('.popup').fadeIn(200)
+        })
+
+        $('#form-create-scene').submit(function (event) {
+            event.preventDefault()
+
+            var data = {
+                Name: $('input[name="scene.name"]').val(),
+                Description: $('textarea[name="scene.description"]').val()
+            }
+
+            console.log(data.Name + " | " + data.Description)
+
+            if (data.Name === "" || data.Description === "") {
+                ShowDangerNotification("Не удалось создать сцену.<br/>Название и описание должно быть заполнено")
+            }
+            else {
+                $.ajax({
+                    type: 'POST',
+                    url: '/Scenes/Create',
+                    traditional: true,
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(data),
+                    success: function (result) {
+                        if (result.status === 0) {
+                            ShowDangerNotification("Не удалось создать сцену.<br/>Название и описание должно быть заполнено")
+                        }
+                        else {
+                            $('.popup-bg').fadeOut(200)
+                            $('.popup').fadeOut(200, function () {
+                                $('input[name="scene.name"]').val("")
+                                $('textarea[name="scene.description"]').val("")
+                                $('.scenes').append(`
+                                <div class="card" sceneid="${result.id}">
+                                    <div class="card-item">
+                                        <label>Название</label>
+                                        <div class="content">${result.name}</div>
+                                    </div>
+                                    <div class="card-item">
+                                        <label>Описание</label>
+                                        <div class="content description">${result.description}</div>
+                                    </div>
+                                    <div class="hr"></div>
+                                    <div class="btn-row">
+                                        <div routeid="${result.id}" class="button-icon edit-scene"><i data-feather="edit-2"></i>Изменить</div>
+                                        <div routeid=${result.id}" class="button-icon delete-scene"><i data-feather="trash"></i>Удалить</div>
+                                    </div>
+                                </div>`)
+                                feather.replace()
+                            })
+                        }
+                    }
+                })
+            }
+        })
+
+        $('.hub').on('click', '.delete-scene', function (event) {
+            event.preventDefault()
+
+            var data = { id: parseInt(event.currentTarget.attributes.routeid.value) }
+
+            $.ajax({
+                type: 'POST',
+                url: '/Scenes/DeleteScene',
+                traditional: true,
+                contentType: 'application/x-www-form-urlencoded',
+                data: data,
+                success: function (result) {
+                    if (result.status === 0) {
+                        ShowDangerNotification("Не удалось удалить сцену")
+                    }
+                    else {
+                        const temp = $(`.card[sceneid="${data.id}"]`)
+                        temp.addClass('animated').addClass('fadeOut')
+                        setTimeout(function () {
+                            temp.animate({ width: 0, padding: 0, margin: 0 }, 800, function () {
+                                temp.remove()
+                            })
+                        }, 500)
+                    }
+                }
+            })
+        })
+
+        $('.hub').on('click', '.edit-scene', function (event) {
+            event.preventDefault()
+
+            var data = { id: parseInt(event.currentTarget.attributes.routeid.value) }
+
+            $('.hub').addClass('fadeOut')
+
+            setTimeout(function () { window.location.href = `/Scenes/Edit/${data.id}`}, 1000)
+        })
+
+        $('#create-cancel').on('click', function (event) {
+            event.preventDefault()
+            console.log('Cancel!')
+            $('.popup-bg').fadeOut(200)
+            $('.popup').fadeOut(200)
+        })
+
+        $('#logout').on('click', function (event) {
+            event.preventDefault()
+            $.ajax({
+                type: 'POST',
+                url: '/Account/Logout',
+                traditional: true,
+                success: function (result) {
+                    window.location.href = result.url
+                }
+            })
+        })
+    })
+
+    function ShowDangerNotification(errorText) {
+        $('.notification-list').append(`
+                                <div class="notification nt-danger">
+                                    <div class="title">Ошибка</div>
+                                    <div class="text">${errorText}</div>
+                                </div>
+                            `)
+        const temp = $('.notification').last()
+        console.log(temp)
+
+        temp.addClass('animated').addClass('fadeInRight')
+
+        setTimeout(function () {
+            temp.addClass('fadeOut')
+            setTimeout(function () {
+                temp.animate({ height: 0, padding: 0, margin: 0 }, 800, function () {
+                    temp.remove()
+                })
+            }, 800)
+        }, 3000);
+    }
+</script>

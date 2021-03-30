@@ -1,0 +1,233 @@
+﻿@model _3dViewer.ViewModels.SceneViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+@Html.HiddenFor(x => x.scene.Source)
+@Html.HiddenFor(x => x.scene.Id)
+@Html.HiddenFor(x => x.modelsLists)
+@Html.AntiForgeryToken()
+
+@foreach (var item in Model.annotations)
+{
+    <div class="annotation_ui">
+        <div class="number"></div>
+        <div class="content">
+            <p><strong>@item.Name</strong></p>
+            <p>@item.Description</p>
+        </div>
+    </div>
+}
+
+<input id="scene_name" type="text" placeholder="Введите имя сцены" value="@Model.scene.Name" />
+
+<div id="annotations">
+    <div class="title">Аннотаций</div>
+    <div class="annotations-list">
+        @foreach (var item in Model.annotations)
+        {
+            <div class="annotation-btn"
+                 xPos="@item.Positionx"
+                 yPos="@item.Positiony"
+                 zPos="@item.Positionz"
+                 xRot="@item.Roatationx"
+                 yRot="@item.Roatationy"
+                 zRot="@item.Roatationz"
+                 xPivotPos="@item.Pivotposx"
+                 yPivotPos="@item.Pivotposy"
+                 zPivotPos="@item.Pivotposz">
+                <div class="ann_title">@item.Name</div>
+                <div class="delete_ann" routeid="@item.Id"><i data-feather="x"></i></div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="editor_group">
+    <div class="sub-group">
+        <div id="btn_hub" class="editor-icon-button" title="Выйти в Hub"><i data-feather="home"></i></div>
+        <div id="btn_save" class="editor-icon-button" title="Сохранить сцену"><i data-feather="save"></i></div>
+    </div>
+    <div class="sub-group">
+        <div id="btn_models" class="editor-icon-button" title="Загрузить модель"><i data-feather="box"></i></div>
+        <div id="btn_annotations" class="editor-icon-button" title="Создать аннотацию"><i data-feather="edit"></i></div>
+        <div id="btn_hdri" class="editor-icon-button" title="Изменить карту окружения"><i data-feather="aperture"></i></div>
+    </div>
+</div>
+
+<div id="edit_group">
+    <div id="btn_move" class="editor-icon-button" title="Изменение позиций"><i data-feather="move"></i></div>
+    <div id="btn_rotate" class="editor-icon-button" title="Изменение вращения"><i data-feather="rotate-cw"></i></div>
+    <div id="btn_scale" class="editor-icon-button" title="Изменение размера"><i data-feather="maximize-2"></i></div>
+</div>
+
+<div id="save_popup" class="editor-popup">
+    <div class="card">
+        <form id="form_save" asp-action="SaveScene" asp-controller="Scenes" method="post">
+            <div class="title">Сохранить сцену</div>
+            <div class="form-item">
+                <input name="scene.name" />
+                <label>Название</label>
+            </div>
+            <div class="form-item">
+                <textarea name="scene.description">@Model.scene.Description</textarea>
+                <label>Описание</label>
+            </div>
+            <input type="hidden" name="scene.source" />
+            <input type="hidden" name="scene.id" value="@Model.scene.Id" />
+            <div class="hr"></div>
+            <div class="btn-row">
+                <button class="button-default" type="submit">Сохранить</button>
+                <div id="save_cancel" class="button-default">Отмена</div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="models_container" style="display: none;">
+    @if (Model.modelsLists != null)
+    {
+        @foreach (var singleModel in Model.modelsLists)
+        {
+            <div class="model" filename="@singleModel.Filename">
+                <img src="https://via.placeholder.com/150" />
+                <div class="text-container">
+                    <div class="title">@singleModel.Name</div>
+                    <div class="desc">@singleModel.Description</div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<div class="hdri-list">
+    <div class="hdri" name="pedestrian_overpass_1k">
+        <div class="title">pedestrian_overpass_1k</div>
+        <img src="https://via.placeholder.com/150" />
+    </div>
+    <div class="hdri" name="quarry_01_1k">
+        <div class="title">quarry_01_1k</div>
+        <img src="https://via.placeholder.com/150" />
+    </div>
+    <div class="hdri" name="royal_esplanade_1k">
+        <div class="title">royal_esplanade_1k</div>
+        <img src="https://via.placeholder.com/150" />
+    </div>
+    <div class="hdri" name="spot1Lux">
+        <div class="title">spot1Lux</div>
+        <img src="https://via.placeholder.com/150" />
+    </div>
+    <div class="hdri" name="venice_sunset_1k">
+        <div class="title">venice_sunset_1k</div>
+        <img src="https://via.placeholder.com/150" />
+    </div>
+</div>
+
+<div id="add_annotation_popup" class="editor-popup">
+    <div class="card">
+        <form id="form_add_ann" asp-action="AddAnnotation">
+            <div class="title">Добавить аннотацию</div>
+            <div class="form-item">
+                <input type="text" name="ann.title" />
+                <label>Заглавие</label>
+            </div>
+            <div class="form-item">
+                <textarea class="textarea" name="ann.description"></textarea>
+                <label>Описание</label>
+            </div>
+            <input name="ann.posx" type="hidden" />
+            <input name="ann.posy" type="hidden" />
+            <input name="ann.posz" type="hidden" />
+            <input name="ann.rotx" type="hidden" />
+            <input name="ann.roty" type="hidden" />
+            <input name="ann.rotz" type="hidden" />
+            <input name="ann.pivotposx" type="hidden" />
+            <input name="ann.pivotposy" type="hidden" />
+            <input name="ann.pivotposz" type="hidden" />
+            <input name="ann.sceneid" type="hidden" value="@Model.scene.Id" />
+            <div class="hr"></div>
+            <div class="btn-row">
+                <button class="button-default" type="submit">Добавить</button>
+                <div id="add_ann_cancel" class="button-default">Отмена</div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="editor_notification">
+</div>
+
+<div id="loading">
+    <div id="loaderImage"></div>
+</div>
+
+<script type="text/javascript">
+    feather.replace()
+</script>
+<script type="text/javascript">
+    var cSpeed = 9;
+    var cWidth = 64;
+    var cHeight = 64;
+    var cTotalFrames = 48;
+    var cFrameWidth = 64;
+    var cImageSrc = '../../sprites/loading.png';
+
+    var cImageTimeout = false;
+    var cIndex = 0;
+    var cXpos = 0;
+    var cPreloaderTimeout = false;
+    var SECONDS_BETWEEN_FRAMES = 0;
+
+    function startAnimation() {
+
+        document.getElementById('loaderImage').style.backgroundImage = 'url(' + cImageSrc + ')';
+        document.getElementById('loaderImage').style.width = cWidth + 'px';
+        document.getElementById('loaderImage').style.height = cHeight + 'px';
+
+        //FPS = Math.round(100/(maxSpeed+2-speed));
+        FPS = Math.round(100 / cSpeed);
+        SECONDS_BETWEEN_FRAMES = 1 / FPS;
+
+        cPreloaderTimeout = setTimeout('continueAnimation()', SECONDS_BETWEEN_FRAMES / 1000);
+
+    }
+
+    function continueAnimation() {
+
+        cXpos += cFrameWidth;
+        //increase the index so we know which frame of our animation we are currently on
+        cIndex += 1;
+
+        //if our cIndex is higher than our total number of frames, we're at the end and should restart
+        if (cIndex >= cTotalFrames) {
+            cXpos = 0;
+            cIndex = 0;
+        }
+
+        if (document.getElementById('loaderImage'))
+            document.getElementById('loaderImage').style.backgroundPosition = (-cXpos) + 'px 0';
+
+        cPreloaderTimeout = setTimeout('continueAnimation()', SECONDS_BETWEEN_FRAMES * 1000);
+    }
+
+    function stopAnimation() {//stops animation
+        clearTimeout(cPreloaderTimeout);
+        cPreloaderTimeout = false;
+    }
+
+    function imageLoader(s, fun)//Pre-loads the sprites image
+    {
+        clearTimeout(cImageTimeout);
+        cImageTimeout = 0;
+        genImage = new Image();
+        genImage.onload = function () { cImageTimeout = setTimeout(fun, 0) };
+        genImage.onerror = new Function('alert(\'Could not load the image\')');
+        genImage.src = s;
+    }
+
+    //The following code starts the animation
+    new imageLoader(cImageSrc, 'startAnimation()');
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.2/TweenMax.min.js"></script>
+<script type="module" src="~/js/editor.js"></script>

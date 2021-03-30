@@ -1,0 +1,90 @@
+﻿@model _3dViewer.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="content-center">
+    <div class="bg-fly-text--login">Регистрация</div>
+    <div class="card">
+        <form asp-action="Register" method="post">
+            <div class="title">Регистрация</div>
+            <div class="form-item">
+                <input asp-for="Login" />
+                <label>Логин</label>
+            </div>
+            <div class="form-item">
+                <input asp-for="Password" />
+                <label>Пароль</label>
+            </div>
+            <div class="form-item">
+                <input asp-for="PasswordConfirm" />
+                <label>Потвердить пароль</label>
+            </div>
+            <div class="hr"></div>
+            <button class="button-default" type="submit">Регистрация</button>
+        </form>
+    </div>
+</div>
+
+<div class="notification-list">
+
+</div>
+
+<script>
+    $(window).on('load', function () {
+        $('.content-center').css("opacity", "1")
+
+        $('.content-center > .bg-fly-text--login').hide().fadeIn(1000)
+        $('.card').addClass('animated').addClass('fadeInUp')
+
+        $('form').submit(function (event) {
+            event.preventDefault()
+
+            var data = {
+                Login: $('input[name="Login"]').val(),
+                Password: $('input[name="Password"]').val()
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/Account/Register',
+                traditional: true,
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (result) {
+                    CreateNotification(result)
+                }
+            })
+        })
+
+        function CreateNotification(result) {
+            switch (result.status) {
+                case 1:
+                    $('.content-center').fadeOut(600, function () { window.location.href = result.url })
+                    break;
+                case 0:
+                    $('.notification-list').append(`
+                                <div class="notification nt-danger">
+                                    <div class="title">Ошибка</div>
+                                    <div class="text">${result.error}</div>
+                                </div>
+                            `)
+                    const temp = $('.notification').last()
+                    console.log(temp)
+
+                    temp.addClass('animated').addClass('fadeInRight')
+
+                    setTimeout(function () {
+                        temp.addClass('fadeOut')
+                        setTimeout(function () {
+                            temp.animate({ height: 0, padding: 0, margin: 0 }, 800, function () {
+                                temp.remove()
+                            })
+                        }, 800)
+                    }, 3000);
+                    break;
+            }
+        }
+    })
+</script>
